@@ -9,12 +9,12 @@ import 'package:flutter/services.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-import 'package:flutter_advanced_networkimage/src/disk_cache.dart';
-import 'package:flutter_advanced_networkimage/src/utils.dart';
+import 'package:flutter_advanced_networkimage_2/src/disk_cache.dart';
+import 'package:flutter_advanced_networkimage_2/src/utils.dart';
 
 /// Fetches the given URL from the network, associating it with some options.
 class AdvancedNetworkSvg extends PictureProvider<AdvancedNetworkSvg> {
-  const AdvancedNetworkSvg(
+  AdvancedNetworkSvg(
     this.url,
     this.decoder, {
     this.scale: 1.0,
@@ -38,7 +38,8 @@ class AdvancedNetworkSvg extends PictureProvider<AdvancedNetworkSvg> {
         assert(useDiskCache != null),
         assert(retryLimit != null),
         assert(retryDuration != null),
-        assert(printError != null);
+        assert(printError != null),
+        super(colorFilter);
 
   /// The URL from which the image will be fetched.
   final String url;
@@ -267,4 +268,9 @@ class AdvancedNetworkSvg extends PictureProvider<AdvancedNetworkSvg> {
       'retryDurationFactor: $retryDurationFactor,'
       'timeoutDuration: $timeoutDuration'
       ')';
+
+  @override
+  set currentColor(Color color) {
+    // TODO: implement currentColor
+  }
 }

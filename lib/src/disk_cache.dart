@@ -6,7 +6,7 @@ import 'dart:typed_data';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 
-import 'package:flutter_advanced_networkimage/src/utils.dart' show crc32, uid;
+import 'package:flutter_advanced_networkimage_2/src/utils.dart' show crc32, uid;
 
 /// Stand for [getTemporaryDirectory] and
 /// [getApplicationDocumentsDirectory] in path_provider plugin.

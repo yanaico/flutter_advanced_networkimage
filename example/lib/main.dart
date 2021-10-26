@@ -4,9 +4,9 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-import 'package:flutter_advanced_networkimage/provider.dart';
-import 'package:flutter_advanced_networkimage/transition.dart';
-import 'package:flutter_advanced_networkimage/zoomable.dart';
+import 'package:flutter_advanced_networkimage_2/provider.dart';
+import 'package:flutter_advanced_networkimage_2/transition.dart';
+import 'package:flutter_advanced_networkimage_2/zoomable.dart';
 
 void main() {
   runApp(MaterialApp(
@@ -22,7 +22,7 @@ class MyApp extends StatefulWidget {
 }
 
 class Example extends State<MyApp> {
-  final String url = 'https://flutter.io/images/flutter-logo-sharing.png';
+  final String url = 'https://openexpoeurope.com/wp-content/uploads/2019/12/flutter-logo-sharing.png';
   final String svgUrl =
       'https://github.com/dart-lang/site-shared/raw/master/src/_assets/image/flutter/logo/default.svg';
 
@@ -68,8 +68,8 @@ class LoadImage extends StatelessWidget {
         TransitionToImage(
           image: AdvancedNetworkImage(
             url,
-            loadedCallback: () => print('It works!'),
-            loadFailedCallback: () => print('Oh, no!'),
+            loadedCallback: () => print('build@loadedCallback  It works!'),
+            loadFailedCallback: () => print('build@loadFailedCallback Oh, no!'),
             // loadingProgress: (double progress, _) => print(progress),
             timeoutDuration: Duration(seconds: 30),
             retryLimit: 1,
@@ -107,8 +107,10 @@ class LoadImage extends StatelessWidget {
         Expanded(
           child: SvgPicture(
             AdvancedNetworkSvg(
-              svgUrl,
-              SvgPicture.svgByteDecoder,
+              svgUrl, //svgByteDecoder
+              (Uint8List bytes, ColorFilter colorFilter, String key) {
+                return svg.svgPictureDecoder(bytes, false, colorFilter, key);
+              },
             ),
           ),
         ),

@@ -9,8 +9,8 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/foundation.dart';
 
-import 'package:flutter_advanced_networkimage/src/disk_cache.dart';
-import 'package:flutter_advanced_networkimage/src/utils.dart';
+import 'package:flutter_advanced_networkimage_2/src/disk_cache.dart';
+import 'package:flutter_advanced_networkimage_2/src/utils.dart';
 
 typedef Future<Uint8List> _ImageProcessing(Uint8List data);
 

@@ -5,13 +5,13 @@ import 'package:test/test.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/painting.dart' show Offset;
 
-import 'package:flutter_advanced_networkimage/src/utils.dart';
+import 'package:flutter_advanced_networkimage_2/src/utils.dart';
 
 void main() {
   group('Download Test', () {
     test('=> good url', () async {
-      var url = 'https://flutter.dev/images/flutter-logo-sharing.png';
-      var result = (await http.get(url)).bodyBytes;
+      var url = 'https://openexpoeurope.com/wp-content/uploads/2019/12/flutter-logo-sharing.png';
+      var result = (await http.get(Uri.parse(url))).bodyBytes;
 
       expect(
           await loadFromRemote(url, null, 5, const Duration(milliseconds: 100),
@@ -21,7 +21,7 @@ void main() {
 
       url =
           'https://github.com/dart-lang/site-shared/raw/master/src/_assets/image/flutter/logo/default.svg';
-      result = (await http.get(url)).bodyBytes;
+      result = (await http.get(Uri.parse(url))).bodyBytes;
 
       expect(
           await loadFromRemote(url, null, 5, const Duration(milliseconds: 100),
@@ -31,8 +31,8 @@ void main() {
     });
     test('=> good url with progress', () async {
       var url = 'this is a label';
-      var realUrl = 'https://flutter.dev/images/flutter-logo-sharing.png';
-      var result = (await http.get(realUrl)).bodyBytes;
+      var realUrl = 'https://openexpoeurope.com/wp-content/uploads/2019/12/flutter-logo-sharing.png';
+      var result = (await http.get(Uri.parse(realUrl))).bodyBytes;
 
       expect(
           await loadFromRemote(
@@ -51,7 +51,7 @@ void main() {
       url = 'this is another label';
       realUrl =
           'https://github.com/dart-lang/site-shared/raw/master/src/_assets/image/flutter/logo/default.svg';
-      result = (await http.get(realUrl)).bodyBytes;
+      result = (await http.get(Uri.parse(realUrl))).bodyBytes;
 
       expect(
           await loadFromRemote(

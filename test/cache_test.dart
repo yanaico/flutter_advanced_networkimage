@@ -6,14 +6,17 @@ import 'package:test/test.dart';
 import 'package:flutter/services.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:flutter_test/flutter_test.dart'
-    show TestWidgetsFlutterBinding, throwsAssertionError;
+    show TestWidgetsFlutterBinding, WidgetTester, throwsAssertionError;
 
-import 'package:flutter_advanced_networkimage/src/disk_cache.dart';
-import 'package:flutter_advanced_networkimage/src/utils.dart';
+import 'package:flutter_advanced_networkimage_2/src/disk_cache.dart';
+import 'package:flutter_advanced_networkimage_2/src/utils.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
-  const MethodChannel('plugins.flutter.io/path_provider')
+  /*var myMethodChannel = MethodChannel('plugins.flutter.io/path_provider');
+  var tester = WidgetTester;
+
+  tester.binding.defaultBinaryMessenger
       .setMockMethodCallHandler((MethodCall methodCall) async {
     if (methodCall.method == 'getApplicationDocumentsDirectory') {
       Directory dir =
@@ -27,7 +30,7 @@ void main() {
       return dir.path;
     }
     return null;
-  });
+  });*/
 
   group('Cache Test', () {
     test('=> non-null test', () async {

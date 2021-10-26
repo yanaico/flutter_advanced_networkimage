@@ -1,5 +1,9 @@
 # Changelog
 
+## [1.0.0]
+
+- Migrate dependencies to null safety
+
 ## [0.8.0]
 
 - Remove `disableMemoryCache` in AdvancedNetworkImage.
