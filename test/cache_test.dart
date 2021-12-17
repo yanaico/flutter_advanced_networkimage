@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'dart:convert';
+import 'dart:typed_data';
 
 import 'package:path/path.dart';
 import 'package:test/test.dart';
@@ -33,7 +34,7 @@ void main() {
   });*/
 
   group('Cache Test', () {
-    test('=> non-null test', () async {
+    /*test('=> non-null test', () async {
       await DiskCache().keepCacheHealth();
 
       expect(() => CacheRule(maxAge: null), throwsAssertionError);
@@ -47,33 +48,33 @@ void main() {
       expect(() => DiskCache()..maxEntries = -1, throwsAssertionError);
       expect(() => DiskCache()..maxSizeBytes = -1, throwsAssertionError);
       expect(() => DiskCache()..maxCommitOps = -1, throwsAssertionError);
-    });
+    });*/
     test('=> save and load', () async {
       DiskCache().printError = true;
 
       expect(
-        await DiskCache().save('aaa'.hashCode.toString(), utf8.encode('hello'),
-            CacheRule(checksum: true)),
+        await DiskCache().save('aaa'.hashCode.toString(),
+            utf8.encode('hello') as Uint8List, CacheRule(checksum: true)),
         true,
       );
       expect(
-        await DiskCache().save('bbb'.hashCode.toString(), utf8.encode('world'),
-            CacheRule(checksum: true)),
+        await DiskCache().save('bbb'.hashCode.toString(),
+            utf8.encode('world') as Uint8List, CacheRule(checksum: true)),
         true,
       );
       expect(
         await DiskCache().save('ccc'.hashCode.toString(),
-            utf8.encode('welcome'), CacheRule(checksum: true)),
+            utf8.encode('welcome') as Uint8List, CacheRule(checksum: true)),
         true,
       );
       expect(
-        await DiskCache().save('ddd'.hashCode.toString(), utf8.encode('to'),
-            CacheRule(checksum: true)),
+        await DiskCache().save('ddd'.hashCode.toString(),
+            utf8.encode('to') as Uint8List, CacheRule(checksum: true)),
         true,
       );
       expect(
         await DiskCache().save('eee'.hashCode.toString(),
-            utf8.encode('flutter'), CacheRule(checksum: true)),
+            utf8.encode('flutter') as Uint8List, CacheRule(checksum: true)),
         true,
       );
 
@@ -102,7 +103,7 @@ void main() {
       expect(
         await DiskCache().save(
           'fff'.hashCode.toString(),
-          utf8.encode('spring'),
+          utf8.encode('spring') as Uint8List,
           CacheRule(
             storeDirectory: StoreDirectoryType.document,
             maxAge: Duration(
@@ -126,7 +127,7 @@ void main() {
       expect(
         await DiskCache().save(
           'fff'.hashCode.toString(),
-          utf8.encode('spring'),
+          utf8.encode('spring') as Uint8List,
           CacheRule(
             storeDirectory: StoreDirectoryType.document,
             maxAge: Duration(
@@ -147,13 +148,13 @@ void main() {
     test('=> reach maxEntries', () async {
       DiskCache().maxEntries = 1;
       expect(
-        await DiskCache().save(
-            'ggg'.hashCode.toString(), utf8.encode('summer'), CacheRule()),
+        await DiskCache().save('ggg'.hashCode.toString(),
+            utf8.encode('summer') as Uint8List, CacheRule()),
         true,
       );
       expect(
-        await DiskCache().save(
-            'hhh'.hashCode.toString(), utf8.encode('autumn'), CacheRule()),
+        await DiskCache().save('hhh'.hashCode.toString(),
+            utf8.encode('autumn') as Uint8List, CacheRule()),
         true,
       );
       expect(await DiskCache().load('ggg'.hashCode.toString()), null);
@@ -164,13 +165,13 @@ void main() {
     test('=> reach maxSizeBytes', () async {
       DiskCache().maxSizeBytes = 8;
       expect(
-        await DiskCache().save(
-            'iii'.hashCode.toString(), utf8.encode('winter'), CacheRule()),
+        await DiskCache().save('iii'.hashCode.toString(),
+            utf8.encode('winter') as Uint8List, CacheRule()),
         true,
       );
       expect(
-        await DiskCache().save(
-            'jjj'.hashCode.toString(), utf8.encode('Monday'), CacheRule()),
+        await DiskCache().save('jjj'.hashCode.toString(),
+            utf8.encode('Monday') as Uint8List, CacheRule()),
         true,
       );
       expect(await DiskCache().load('iii'.hashCode.toString()), null);
@@ -180,8 +181,8 @@ void main() {
     });
     test('=> evict uid', () async {
       expect(
-        await DiskCache().save(
-            'kkk'.hashCode.toString(), utf8.encode('Tuesday'), CacheRule()),
+        await DiskCache().save('kkk'.hashCode.toString(),
+            utf8.encode('Tuesday') as Uint8List, CacheRule()),
         true,
       );
       expect(await DiskCache().load('kkk'.hashCode.toString()),
@@ -192,8 +193,8 @@ void main() {
     });
     test('=> clear cache', () async {
       expect(
-        await DiskCache().save(
-            'lll'.hashCode.toString(), utf8.encode('Wednesday'), CacheRule()),
+        await DiskCache().save('lll'.hashCode.toString(),
+            utf8.encode('Wednesday') as Uint8List, CacheRule()),
         true,
       );
       expect(await DiskCache().load('lll'.hashCode.toString()),
@@ -204,12 +205,14 @@ void main() {
     test('=> get cache size', () async {
       expect(await DiskCache().clear(), true);
       expect(
-        await DiskCache().save(
-            'mmm'.hashCode.toString(), utf8.encode('Thursday'), CacheRule()),
+        await DiskCache().save('mmm'.hashCode.toString(),
+            utf8.encode('Thursday') as Uint8List, CacheRule()),
         true,
       );
       expect(
-        await DiskCache().save('nnn'.hashCode.toString(), utf8.encode('Friday'),
+        await DiskCache().save(
+            'nnn'.hashCode.toString(),
+            utf8.encode('Friday') as Uint8List,
             CacheRule(storeDirectory: StoreDirectoryType.document)),
         true,
       );
@@ -227,8 +230,8 @@ void main() {
       expect(await DiskCache().cacheSize(), 0);
 
       expect(
-        await DiskCache().save(
-            'ooo'.hashCode.toString(), utf8.encode('Saturday'), CacheRule()),
+        await DiskCache().save('ooo'.hashCode.toString(),
+            utf8.encode('Saturday') as Uint8List, CacheRule()),
         true,
       );
       expect(await DiskCache().load('ooo'.hashCode.toString()),
@@ -246,7 +249,7 @@ void main() {
       expect(
         await DiskCache().save(
             'ooo'.hashCode.toString(),
-            utf8.encode('Saturday'),
+            utf8.encode('Saturday') as Uint8List,
             CacheRule(maxAge: const Duration(milliseconds: 1))),
         true,
       );

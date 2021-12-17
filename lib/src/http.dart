@@ -23,7 +23,7 @@ import 'package:path_provider/path_provider.dart';
 class Fetch extends http.BaseClient {
   Fetch({
     int maxActiveRequests = 20,
-    String proxy,
+    String? proxy,
     bool autoUncompress = false,
     this.followRedirects = true,
     this.maxRedirects = 5,
@@ -47,7 +47,7 @@ class Fetch extends http.BaseClient {
 
     Future<http.StreamedResponse> _send(
       http.BaseRequest request, {
-      List<Cookie> cookieList,
+      List<Cookie>? cookieList,
     }) async {
       _Response res =
           await _sendRequest(request, client: _client, cookies: cookieList);
@@ -65,7 +65,7 @@ class Fetch extends http.BaseClient {
               response.statusCode == HttpStatus.seeOther ||
               response.statusCode == HttpStatus.notModified)) {
         if (_redirects.length < maxRedirects) {
-          String location = response.headers['location'];
+          String? location = response.headers['location'];
           if (location == null)
             throw StateError('Response has no Location header for redirect');
           Uri url = Uri.parse(location);
@@ -124,13 +124,13 @@ class Fetch extends http.BaseClient {
     );
   }
 
-  void close() => _client?.close();
+  void close() => _client.close();
 }
 
 Future<_Response> _sendRequest(
   http.BaseRequest request, {
-  HttpClient client,
-  List<Cookie> cookies,
+  HttpClient? client,
+  List<Cookie>? cookies,
 }) async {
   HttpClient _client = client ?? HttpClient();
   var stream = request.finalize();
@@ -141,7 +141,7 @@ Future<_Response> _sendRequest(
     ioRequest
       ..followRedirects = false
       ..contentLength =
-          request.contentLength == null ? -1 : request.contentLength
+          request.contentLength == null ? -1 : request.contentLength!
       ..persistentConnection = request.persistentConnection;
     request.headers.forEach((name, value) {
       ioRequest.headers.set(name, value);
@@ -150,7 +150,8 @@ Future<_Response> _sendRequest(
       ioRequest.cookies.addAll(cookies);
 
     HttpClientResponse res =
-        await stream.pipe(DelegatingStreamConsumer.typed(ioRequest));
+        await (stream.pipe(DelegatingStreamConsumer.typed(ioRequest))
+            as FutureOr<HttpClientResponse>);
     var headers = <String, String>{};
     res.headers.forEach((key, values) {
       headers[key] = values.join(',');
@@ -203,9 +204,9 @@ class Cookies {
     return v;
   }
 
-  List<Cookie> _cookies;
-  Map<String, List<Cookies>> _sessions;
-  File path;
+  List<Cookie>? _cookies;
+  Map<String, List<Cookies>>? _sessions;
+  File? path;
 
   Future<void> _initCookies() async {
     if (saveInDisk) {
@@ -213,8 +214,8 @@ class Cookies {
           File(join((await getTemporaryDirectory()).path, _cookiesFilename));
 
       try {
-        if (path.existsSync()) {
-          _cookies = List<String>.from(json.decode(await path.readAsString()))
+        if (path!.existsSync()) {
+          _cookies = List<String>.from(json.decode(await path!.readAsString()))
               .map((String value) => Cookie.fromSetCookieValue(value))
               .toList();
         } else {
@@ -229,16 +230,16 @@ class Cookies {
     }
   }
 
-  Future<List<Cookie>> get({Uri uri}) async {
+  Future<List<Cookie>> get({Uri? uri}) async {
     if (_cookies == null) await _initCookies();
 
-    Future(() => _cookies.removeWhere((Cookie _cookie) =>
+    Future(() => _cookies!.removeWhere((Cookie _cookie) =>
         _cookie.expires?.isBefore(DateTime.now()) ?? false));
-    return _cookies.where((Cookie _cookie) {
-      return uri.host.endsWith(_cookie.domain[0] == '.'
-              ? _cookie.domain.replaceFirst('.', '')
-              : _cookie.domain) &&
-          (uri.path.isEmpty ? '/' : uri.path).startsWith(_cookie.path) &&
+    return _cookies!.where((Cookie _cookie) {
+      return uri!.host.endsWith(_cookie.domain![0] == '.'
+              ? _cookie.domain!.replaceFirst('.', '')
+              : _cookie.domain!) &&
+          (uri.path.isEmpty ? '/' : uri.path).startsWith(_cookie.path!) &&
           (_cookie.expires?.isAfter(DateTime.now()) ?? true);
     }).toList();
   }
@@ -248,12 +249,12 @@ class Cookies {
 
     _cookies ??= [];
     cookies.forEach((Cookie newCookie) {
-      _cookies.removeWhere((Cookie oldCookie) {
+      _cookies!.removeWhere((Cookie oldCookie) {
         try {
-          bool matchDomain = newCookie.domain.endsWith(oldCookie.domain) ||
-              oldCookie.domain.endsWith(newCookie.domain);
-          bool matchPath = newCookie.path.startsWith(oldCookie.path) ||
-              oldCookie.path.startsWith(newCookie.path);
+          bool matchDomain = newCookie.domain!.endsWith(oldCookie.domain!) ||
+              oldCookie.domain!.endsWith(newCookie.domain!);
+          bool matchPath = newCookie.path!.startsWith(oldCookie.path!) ||
+              oldCookie.path!.startsWith(newCookie.path!);
           bool matchName = newCookie.name == oldCookie.name;
 
           return matchDomain && matchPath && matchName;
@@ -263,19 +264,19 @@ class Cookies {
         }
       });
       if (newCookie.expires?.isAfter(DateTime.now()) ?? true)
-        _cookies.add(newCookie);
+        _cookies!.add(newCookie);
     });
 
     _saveCookies();
   }
 
-  Future<void> clear({bool sessionOnly = true, Uri uri}) async {
+  Future<void> clear({bool sessionOnly = true, Uri? uri}) async {
     assert(sessionOnly != null);
 
-    _cookies.removeWhere((Cookie _cookie) {
+    _cookies!.removeWhere((Cookie _cookie) {
       return (uri != null
-                  ? uri.host.endsWith(_cookie.domain) &&
-                      uri.path.startsWith(_cookie.path)
+                  ? uri.host.endsWith(_cookie.domain!) &&
+                      uri.path.startsWith(_cookie.path!)
                   : true) &&
               (sessionOnly ? _cookie.expires == null : true) ||
           (_cookie.expires?.isBefore(DateTime.now()) ?? true);
@@ -285,8 +286,8 @@ class Cookies {
   }
 
   Future<void> _saveCookies() async {
-    Iterable<Cookie> data = _cookies.where((Cookie _cookie) =>
-        _cookie.expires != null && _cookie.expires.isAfter(DateTime.now()));
+    Iterable<Cookie> data = _cookies!.where((Cookie _cookie) =>
+        _cookie.expires != null && _cookie.expires!.isAfter(DateTime.now()));
 
     if (saveInDisk) {
       path ??=
@@ -295,7 +296,7 @@ class Cookies {
       if (data.length > 0) {
         String cookiesString = json
             .encode(data.map((Cookie cookie) => cookie.toString()).toList());
-        await path.writeAsString(cookiesString);
+        await path!.writeAsString(cookiesString);
       }
     }
   }

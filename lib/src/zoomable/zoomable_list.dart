@@ -2,8 +2,8 @@ import 'package:flutter/widgets.dart';
 
 class ZoomableList extends StatefulWidget {
   ZoomableList({
-    Key key,
-    @required this.child,
+    Key? key,
+    required this.child,
     this.childKey,
     this.maxScale: 1.4,
     this.enablePan: true,
@@ -23,16 +23,16 @@ class ZoomableList extends StatefulWidget {
 
   final Widget child;
   @deprecated
-  final GlobalKey childKey;
+  final GlobalKey? childKey;
   final double maxScale;
   final bool enableZoom;
   final bool enablePan;
-  final double maxWidth;
+  final double? maxWidth;
   final double maxHeight;
   final int zoomSteps;
   final bool enableFling;
   final double flingFactor;
-  final VoidCallback onTap;
+  final VoidCallback? onTap;
 
   @override
   _ZoomableListState createState() => _ZoomableListState();
@@ -52,11 +52,11 @@ class _ZoomableListState extends State<ZoomableList>
   Size _widgetSize = Size.zero;
   bool _getContainerSize = false;
 
-  AnimationController _controller;
-  AnimationController _flingController;
-  Animation<double> _zoomAnimation;
-  Animation<Offset> _panOffsetAnimation;
-  Animation<Offset> _flingAnimation;
+  late AnimationController _controller;
+  AnimationController? _flingController;
+  late Animation<double> _zoomAnimation;
+  late Animation<Offset> _panOffsetAnimation;
+  late Animation<Offset> _flingAnimation;
 
   @override
   void initState() {
@@ -70,19 +70,19 @@ class _ZoomableListState extends State<ZoomableList>
   @override
   void dispose() {
     _controller.dispose();
-    _flingController.dispose();
+    _flingController!.dispose();
     super.dispose();
   }
 
   void _handleReset() {
     _zoomAnimation = Tween<double>(begin: 1.0, end: _zoom)
         .animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut))
-          ..addListener(() => setState(() => _zoom = _zoomAnimation.value));
+      ..addListener(() => setState(() => _zoom = _zoomAnimation.value));
     _panOffsetAnimation = Tween<Offset>(
             begin: Offset(0.0, _panOffset.dy), end: _panOffset)
         .animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut))
-          ..addListener(
-              () => setState(() => _panOffset = _panOffsetAnimation.value));
+      ..addListener(
+          () => setState(() => _panOffset = _panOffsetAnimation.value));
     if (_zoom < 0)
       _controller.forward(from: 1.0);
     else
@@ -97,7 +97,7 @@ class _ZoomableListState extends State<ZoomableList>
   }
 
   void _onScaleStart(ScaleStartDetails details) {
-    _flingController.stop();
+    _flingController!.stop();
     setState(() {
       _startTouchOriginOffset = details.focalPoint;
       _previewPanOffset = _panOffset;
@@ -107,7 +107,8 @@ class _ZoomableListState extends State<ZoomableList>
 
   void _onScaleUpdate(ScaleUpdateDetails details) {
     if (!_getContainerSize) {
-      final RenderBox box = _key.currentContext.findRenderObject();
+      final RenderBox box =
+          _key.currentContext!.findRenderObject() as RenderBox;
       if (box.size == _containerSize) {
         _getContainerSize = true;
       } else {
@@ -151,7 +152,8 @@ class _ZoomableListState extends State<ZoomableList>
 
   void _onScaleEnd(ScaleEndDetails details) {
     if (!_getContainerSize) {
-      final RenderBox box = _key.currentContext.findRenderObject();
+      final RenderBox box =
+          _key.currentContext!.findRenderObject() as RenderBox;
       if (box.size == _containerSize) {
         _getContainerSize = true;
       } else {
@@ -163,7 +165,7 @@ class _ZoomableListState extends State<ZoomableList>
     final double magnitude = velocity.distance;
     if (magnitude > 800.0 * _zoom && widget.enableFling) {
       final Offset direction = velocity / magnitude;
-      final double distance = (Offset.zero & context.size).shortestSide;
+      final double distance = (Offset.zero & context.size!).shortestSide;
       final Offset endOffset =
           _panOffset + direction * distance * widget.flingFactor * 0.5;
       _flingAnimation = Tween(
@@ -178,10 +180,10 @@ class _ZoomableListState extends State<ZoomableList>
             _widgetSize.height / 2 * (_zoom - 1.0) / (widget.maxScale - 1.0),
           ),
         ),
-      ).animate(_flingController)
+      ).animate(_flingController!)
         ..addListener(() => setState(() => _panOffset = _flingAnimation.value));
 
-      _flingController
+      _flingController!
         ..value = 0.0
         ..fling(velocity: magnitude / 1000.0);
     }

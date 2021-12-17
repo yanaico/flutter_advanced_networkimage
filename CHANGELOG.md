@@ -1,5 +1,9 @@
 # Changelog
 
+## [2.0.0]
+
+-  migrate to null safety
+
 ## [1.0.0]
 
 - Migrate dependencies to null safety

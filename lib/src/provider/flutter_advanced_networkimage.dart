@@ -12,7 +12,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_advanced_networkimage_2/src/disk_cache.dart';
 import 'package:flutter_advanced_networkimage_2/src/utils.dart';
 
-typedef Future<Uint8List> _ImageProcessing(Uint8List data);
+typedef Future<Uint8List?> _ImageProcessing(Uint8List data);
 
 /// Fetches the given URL from the network, associating it with some options.
 class AdvancedNetworkImage extends ImageProvider<AdvancedNetworkImage> {
@@ -56,13 +56,13 @@ class AdvancedNetworkImage extends ImageProvider<AdvancedNetworkImage> {
   final double scale;
 
   /// The width the image should decode to and cache in memory.
-  final int width;
+  final int? width;
 
   /// The height the image should decode to and cache in momory.
-  final int height;
+  final int? height;
 
   /// The HTTP headers that will be used with [http] to fetch image from network.
-  final Map<String, String> header;
+  final Map<String, String>? header;
 
   /// The flag control the disk cache will be used or not.
   final bool useDiskCache;
@@ -80,43 +80,43 @@ class AdvancedNetworkImage extends ImageProvider<AdvancedNetworkImage> {
   final Duration timeoutDuration;
 
   /// The callback will fire when the image loaded.
-  final VoidCallback loadedCallback;
+  final VoidCallback? loadedCallback;
 
   /// The callback will fire when the image failed to load.
-  final VoidCallback loadFailedCallback;
+  final VoidCallback? loadFailedCallback;
 
   /// The callback will fire when the image loaded from DiskCache.
-  final VoidCallback loadedFromDiskCacheCallback;
+  final VoidCallback? loadedFromDiskCacheCallback;
 
   /// Displays image from an asset bundle when the image failed to load.
-  final String fallbackAssetImage;
+  final String? fallbackAssetImage;
 
   /// The image will be displayed when the image failed to load
   /// and [fallbackAssetImage] is null.
-  final Uint8List fallbackImage;
+  final Uint8List? fallbackImage;
 
   /// Disk cache rules for advanced control.
-  final CacheRule cacheRule;
+  final CacheRule? cacheRule;
 
   /// Report loading progress and data when fetching image.
-  LoadingProgress loadingProgress;
+  LoadingProgress? loadingProgress;
 
   /// Extract the real url before fetching.
-  final UrlResolver getRealUrl;
+  final UrlResolver? getRealUrl;
 
   /// Receive the data([Uint8List]) and do some manipulations before saving.
-  final _ImageProcessing preProcessing;
+  final _ImageProcessing? preProcessing;
 
   /// Receive the data([Uint8List]) and do some manipulations after saving.
-  final _ImageProcessing postProcessing;
+  final _ImageProcessing? postProcessing;
 
   /// Print error messages.
   final bool printError;
 
   /// The [HttpStatus] code that you can skip retrying if you meet them.
-  final List<int> skipRetryStatusCode;
+  final List<int>? skipRetryStatusCode;
 
-  final String id;
+  final String? id;
 
   @override
   Future<AdvancedNetworkImage> obtainKey(ImageConfiguration configuration) {
@@ -125,7 +125,7 @@ class AdvancedNetworkImage extends ImageProvider<AdvancedNetworkImage> {
 
   @override
   Future<bool> evict({
-    ImageCache cache,
+    ImageCache? cache,
     ImageConfiguration configuration = ImageConfiguration.empty,
     bool memory = true,
     bool disk = false,
@@ -136,7 +136,7 @@ class AdvancedNetworkImage extends ImageProvider<AdvancedNetworkImage> {
     if (memory) {
       cache ??= imageCache;
       final key = await obtainKey(configuration);
-      return cache.evict(key);
+      return cache!.evict(key);
     }
     if (disk) {
       return removeFromCache(url);
@@ -168,11 +168,11 @@ class AdvancedNetworkImage extends ImageProvider<AdvancedNetworkImage> {
 
     if (useDiskCache) {
       try {
-        Uint8List _diskCache = await loadFromDiskCache();
+        Uint8List? _diskCache = await loadFromDiskCache();
         if (_diskCache != null) {
           if (key.postProcessing != null)
-            _diskCache = (await key.postProcessing(_diskCache)) ?? _diskCache;
-          if (key.loadedCallback != null) key.loadedCallback();
+            _diskCache = (await key.postProcessing!(_diskCache)) ?? _diskCache;
+          if (key.loadedCallback != null) key.loadedCallback!();
           return decode(
             _diskCache,
             cacheWidth: key.width,
@@ -183,7 +183,7 @@ class AdvancedNetworkImage extends ImageProvider<AdvancedNetworkImage> {
         if (key.printError) print(e);
       }
     } else {
-      Uint8List imageData = await loadFromRemote(
+      Uint8List? imageData = await loadFromRemote(
         key.url,
         key.header,
         key.retryLimit,
@@ -196,8 +196,8 @@ class AdvancedNetworkImage extends ImageProvider<AdvancedNetworkImage> {
       );
       if (imageData != null) {
         if (key.postProcessing != null)
-          imageData = (await key.postProcessing(imageData)) ?? imageData;
-        if (key.loadedCallback != null) key.loadedCallback();
+          imageData = (await key.postProcessing!(imageData)) ?? imageData;
+        if (key.loadedCallback != null) key.loadedCallback!();
         return decode(
           imageData,
           cacheWidth: key.width,
@@ -206,9 +206,9 @@ class AdvancedNetworkImage extends ImageProvider<AdvancedNetworkImage> {
       }
     }
 
-    if (key.loadFailedCallback != null) key.loadFailedCallback();
+    if (key.loadFailedCallback != null) key.loadFailedCallback!();
     if (key.fallbackAssetImage != null) {
-      ByteData imageData = await rootBundle.load(key.fallbackAssetImage);
+      ByteData imageData = await rootBundle.load(key.fallbackAssetImage!);
       return decode(
         imageData.buffer.asUint8List(),
         cacheWidth: key.width,
@@ -217,7 +217,7 @@ class AdvancedNetworkImage extends ImageProvider<AdvancedNetworkImage> {
     }
     if (key.fallbackImage != null)
       return decode(
-        key.fallbackImage,
+        key.fallbackImage!,
         cacheWidth: key.width,
         cacheHeight: key.height,
       );
@@ -231,7 +231,7 @@ class AdvancedNetworkImage extends ImageProvider<AdvancedNetworkImage> {
   /// 1. Check if cache directory exist. If not exist, create it.
   /// 2. Check if cached file(uid) exist. If yes, load the cache,
   ///   otherwise go to download step.
-  Future<Uint8List> loadFromDiskCache() async {
+  Future<Uint8List?> loadFromDiskCache() async {
     AdvancedNetworkImage key = this;
 
     String uId = uid(key.url);
@@ -243,14 +243,14 @@ class AdvancedNetworkImage extends ImageProvider<AdvancedNetworkImage> {
         File _cacheImageFile = File(join(_cacheImagesDirectory.path, uId));
         if (_cacheImageFile.existsSync()) {
           if (key.loadedFromDiskCacheCallback != null)
-            key.loadedFromDiskCacheCallback();
+            key.loadedFromDiskCacheCallback!();
           return await _cacheImageFile.readAsBytes();
         }
       } else {
         await _cacheImagesDirectory.create();
       }
 
-      Uint8List imageData = await loadFromRemote(
+      Uint8List? imageData = await loadFromRemote(
         key.url,
         key.header,
         key.retryLimit,
@@ -264,17 +264,17 @@ class AdvancedNetworkImage extends ImageProvider<AdvancedNetworkImage> {
       );
       if (imageData != null) {
         if (key.preProcessing != null)
-          imageData = (await key.preProcessing(imageData)) ?? imageData;
+          imageData = (await key.preProcessing!(imageData)) ?? imageData;
         await (File(join(_cacheImagesDirectory.path, uId)))
             .writeAsBytes(imageData);
         return imageData;
       }
     } else {
       DiskCache diskCache = DiskCache()..printError = key.printError;
-      Uint8List data = await diskCache.load(uId, rule: key.cacheRule);
+      Uint8List? data = await diskCache.load(uId, rule: key.cacheRule);
       if (data != null) {
         if (key.loadedFromDiskCacheCallback != null)
-          key.loadedFromDiskCacheCallback();
+          key.loadedFromDiskCacheCallback!();
         return data;
       }
 
@@ -291,8 +291,8 @@ class AdvancedNetworkImage extends ImageProvider<AdvancedNetworkImage> {
       );
       if (data != null) {
         if (key.preProcessing != null)
-          data = (await key.preProcessing(data)) ?? data;
-        await diskCache.save(uId, data, key.cacheRule);
+          data = (await key.preProcessing!(data)) ?? data;
+        await diskCache.save(uId, data, key.cacheRule!);
         return data;
       }
     }
