@@ -4,8 +4,8 @@ fork from https://pub.dev/packages/flutter_advanced_networkimage
 migrate to null safety
  
 
-[![Pub Package](https://img.shields.io/pub/v/flutter_advanced_networkimage.svg)](https://pub.dev/packages/flutter_advanced_networkimage2)
-<!--[![Pre Pub Package](https://img.shields.io/pub/vpre/flutter_advanced_networkimage.svg)](https://pub.dev/packages/flutter_advanced_networkimage)
+<!--[![Pub Package](https://img.shields.io/pub/v/flutter_advanced_networkimage.svg)](https://pub.dev/packages/flutter_advanced_networkimage_2)
+[![Pre Pub Package](https://img.shields.io/pub/vpre/flutter_advanced_networkimage.svg)](https://pub.dev/packages/flutter_advanced_networkimage)
 [![Build Status](https://travis-ci.org/mchome/flutter_advanced_networkimage.svg?branch=master)](https://travis-ci.org/mchome/flutter_advanced_networkimage?branch=master)
 [![Coverage Status](https://coveralls.io/repos/github/mchome/flutter_advanced_networkimage/badge.svg?branch=master)](https://coveralls.io/github/mchome/flutter_advanced_networkimage?branch=master)-->
 
