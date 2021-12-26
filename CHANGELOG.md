@@ -1,8 +1,16 @@
 # Changelog
 
+## [2.0.1]
+
+- Remove unnecessary assertions (that tested for nullability).
+- Fix null safety with recent Dart version.
+- Fix warnings reported by the linter.
+- Use an equal sign to define default parameter values (instead of a colon).
+- Use other calls to replace deprecated ones.
+
 ## [2.0.0]
 
--  migrate to null safety
+- Migrate to null safety
 
 ## [1.0.0]
 
