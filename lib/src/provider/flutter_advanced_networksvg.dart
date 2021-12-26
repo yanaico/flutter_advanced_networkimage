@@ -13,18 +13,18 @@ import 'package:flutter_advanced_networkimage_2/src/disk_cache.dart';
 import 'package:flutter_advanced_networkimage_2/src/utils.dart';
 
 /// Fetches the given URL from the network, associating it with some options.
-class AdvancedNetworkSvg extends PictureProvider<AdvancedNetworkSvg> {
+class AdvancedNetworkSvg extends PictureProvider<AdvancedNetworkSvg, Uint8List?> {
   AdvancedNetworkSvg(
     this.url,
-    this.decoder, {
-    this.scale: 1.0,
+    PictureInfoDecoderBuilder<Uint8List?> decoder, {
+    this.scale = 1.0,
     this.header,
     this.colorFilter,
-    this.useDiskCache: false,
-    this.retryLimit: 5,
-    this.retryDuration: const Duration(milliseconds: 500),
-    this.retryDurationFactor: 1.5,
-    this.timeoutDuration: const Duration(seconds: 5),
+    this.useDiskCache = false,
+    this.retryLimit = 5,
+    this.retryDuration = const Duration(milliseconds: 500),
+    this.retryDurationFactor = 1.5,
+    this.timeoutDuration = const Duration(seconds: 5),
     this.loadedCallback,
     this.loadFailedCallback,
     this.fallbackAssetImage,
@@ -33,19 +33,10 @@ class AdvancedNetworkSvg extends PictureProvider<AdvancedNetworkSvg> {
     this.getRealUrl,
     this.printError = false,
     this.skipRetryStatusCode,
-  })  : assert(url != null),
-        assert(scale != null),
-        assert(useDiskCache != null),
-        assert(retryLimit != null),
-        assert(retryDuration != null),
-        assert(printError != null),
-        super(colorFilter);
+  }) : super(colorFilter, decoderBuilder: decoder);
 
   /// The URL from which the image will be fetched.
   final String url;
-
-  /// The decoder provided by flutter_svg (svgByteDecoder or svgByteDecoderOutsideViewBox)
-  final PictureInfoDecoder<Uint8List?> decoder;
 
   /// The scale to place in the [ImageInfo] object of the image.
   final double scale;
@@ -114,12 +105,7 @@ class AdvancedNetworkSvg extends PictureProvider<AdvancedNetworkSvg> {
   }
 
   Future<bool> evict({bool disk = false}) async {
-    assert(disk != null);
-
-    if (disk) {
-      return removeFromCache(url);
-    }
-    return false;
+    return disk ? await removeFromCache(url) : false;
   }
 
   Future<PictureInfo> _loadAsync(AdvancedNetworkSvg key,
@@ -172,6 +158,7 @@ class AdvancedNetworkSvg extends PictureProvider<AdvancedNetworkSvg> {
       Uint8List? imageData, ColorFilter? colorFilter, String keyString,
       {PictureErrorListener? onError}) {
     if (onError != null)
+      // ignore: invalid_return_type_for_catch_error
       return decoder(imageData, colorFilter, keyString)..catchError(onError);
     return decoder(imageData, colorFilter, keyString);
   }
@@ -268,9 +255,4 @@ class AdvancedNetworkSvg extends PictureProvider<AdvancedNetworkSvg> {
       'retryDurationFactor: $retryDurationFactor,'
       'timeoutDuration: $timeoutDuration'
       ')';
-
-  @override
-  set currentColor(Color? color) {
-    // TODO: implement currentColor
-  }
 }

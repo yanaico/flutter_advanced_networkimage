@@ -30,11 +30,7 @@ class MyRawImage extends LeafRenderObjectWidget {
     this.invertColors = false,
     this.filterQuality = FilterQuality.low,
     this.imageFilter,
-  })  : assert(scale != null),
-        assert(alignment != null),
-        assert(repeat != null),
-        assert(matchTextDirection != null),
-        super(key: key);
+  }) : super(key: key);
 
   /// The image to display.
   final ui.Image? image;
@@ -253,12 +249,7 @@ class MyRenderImage extends RenderBox {
     bool invertColors = false,
     FilterQuality filterQuality = FilterQuality.low,
     ui.ImageFilter? imageFilter,
-  })  : assert(scale != null),
-        assert(repeat != null),
-        assert(alignment != null),
-        assert(filterQuality != null),
-        assert(matchTextDirection != null),
-        _image = image,
+  })  : _image = image,
         _width = width,
         _height = height,
         _scale = scale,
@@ -332,7 +323,6 @@ class MyRenderImage extends RenderBox {
   double get scale => _scale;
   double _scale;
   set scale(double value) {
-    assert(value != null);
     if (value == _scale) return;
     _scale = value;
     markNeedsLayout();
@@ -365,7 +355,6 @@ class MyRenderImage extends RenderBox {
   FilterQuality get filterQuality => _filterQuality;
   FilterQuality _filterQuality;
   set filterQuality(FilterQuality value) {
-    assert(value != null);
     if (value == _filterQuality) return;
     _filterQuality = value;
     markNeedsPaint();
@@ -407,7 +396,6 @@ class MyRenderImage extends RenderBox {
   AlignmentGeometry get alignment => _alignment;
   AlignmentGeometry _alignment;
   set alignment(AlignmentGeometry value) {
-    assert(value != null);
     if (value == _alignment) return;
     _alignment = value;
     _markNeedResolution();
@@ -417,7 +405,6 @@ class MyRenderImage extends RenderBox {
   ImageRepeat get repeat => _repeat;
   ImageRepeat _repeat;
   set repeat(ImageRepeat value) {
-    assert(value != null);
     if (value == _repeat) return;
     _repeat = value;
     markNeedsPaint();
@@ -468,7 +455,6 @@ class MyRenderImage extends RenderBox {
   bool get matchTextDirection => _matchTextDirection;
   bool _matchTextDirection;
   set matchTextDirection(bool value) {
-    assert(value != null);
     if (value == _matchTextDirection) return;
     _matchTextDirection = value;
     _markNeedResolution();
@@ -691,11 +677,6 @@ void myPaintImage({
   FilterQuality filterQuality = FilterQuality.low,
   ui.ImageFilter? imageFilter,
 }) {
-  assert(canvas != null);
-  assert(image != null);
-  assert(alignment != null);
-  assert(repeat != null);
-  assert(flipHorizontally != null);
   if (rect.isEmpty) return;
   Size outputSize = rect.size;
   Size inputSize = Size(image.width.toDouble(), image.height.toDouble());

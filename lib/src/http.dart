@@ -16,7 +16,6 @@ import 'dart:convert';
 
 import 'package:path/path.dart';
 import 'package:pool/pool.dart';
-import 'package:async/async.dart';
 import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
 
@@ -28,7 +27,6 @@ class Fetch extends http.BaseClient {
     this.followRedirects = true,
     this.maxRedirects = 5,
   })  : assert(maxActiveRequests > 0),
-        assert(followRedirects != null),
         _pool = Pool(maxActiveRequests),
         _client = HttpClient()
           ..findProxy = proxy != null ? ((_) => proxy) : null
@@ -53,7 +51,7 @@ class Fetch extends http.BaseClient {
           await _sendRequest(request, client: _client, cookies: cookieList);
       http.StreamedResponse response = res.response;
       List<Cookie> cookies = res.cookies;
-      if (cookies != null && cookies.length > 0)
+      if (cookies.length > 0)
         await _cookies.set(cookies
             .map((Cookie cookie) => cookie..domain ??= request.url.host)
             .toList());
@@ -149,9 +147,10 @@ Future<_Response> _sendRequest(
     if (cookies != null && cookies.length > 0)
       ioRequest.cookies.addAll(cookies);
 
-    HttpClientResponse res =
-        await (stream.pipe(DelegatingStreamConsumer.typed(ioRequest))
-            as FutureOr<HttpClientResponse>);
+    final consumer = StreamController<List<int>>(sync: true)..stream.cast().pipe(ioRequest);
+    final typed = stream.pipe(consumer);
+
+    HttpClientResponse res = await (typed as FutureOr<HttpClientResponse>);
     var headers = <String, String>{};
     res.headers.forEach((key, values) {
       headers[key] = values.join(',');
@@ -159,7 +158,7 @@ Future<_Response> _sendRequest(
 
     return _Response(
       http.StreamedResponse(
-        DelegatingStream.typed<List<int>>(res).handleError(
+        res.cast<List<int>>().handleError(
             (error) => throw http.ClientException(error.message, error.uri),
             test: (error) => error is HttpException),
         res.statusCode,
@@ -205,7 +204,6 @@ class Cookies {
   }
 
   List<Cookie>? _cookies;
-  Map<String, List<Cookies>>? _sessions;
   File? path;
 
   Future<void> _initCookies() async {
@@ -271,8 +269,6 @@ class Cookies {
   }
 
   Future<void> clear({bool sessionOnly = true, Uri? uri}) async {
-    assert(sessionOnly != null);
-
     _cookies!.removeWhere((Cookie _cookie) {
       return (uri != null
                   ? uri.host.endsWith(_cookie.domain!) &&

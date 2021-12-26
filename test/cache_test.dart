@@ -4,10 +4,9 @@ import 'dart:typed_data';
 
 import 'package:path/path.dart';
 import 'package:test/test.dart';
-import 'package:flutter/services.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:flutter_test/flutter_test.dart'
-    show TestWidgetsFlutterBinding, WidgetTester, throwsAssertionError;
+    show TestWidgetsFlutterBinding;
 
 import 'package:flutter_advanced_networkimage_2/src/disk_cache.dart';
 import 'package:flutter_advanced_networkimage_2/src/utils.dart';

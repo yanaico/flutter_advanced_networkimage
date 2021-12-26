@@ -12,11 +12,13 @@ void main() {
   runApp(MaterialApp(
     title: 'Flutter Example',
     theme: ThemeData(primaryColor: Colors.blue),
-    home: MyApp(),
+    home: const MyApp(),
   ));
 }
 
 class MyApp extends StatefulWidget {
+  const MyApp({Key? key}) : super(key: key);
+
   @override
   State<StatefulWidget> createState() => Example();
 }
@@ -32,13 +34,13 @@ class Example extends State<MyApp> {
       length: 3,
       child: Scaffold(
         appBar: AppBar(
-          title: Text('Flutter Advanced Network Image Example'),
-          bottom: TabBar(
+          title: const Text('Flutter Advanced Network Image Example'),
+          bottom: const TabBar(
             isScrollable: true,
             tabs: <Widget>[
-              const Tab(text: 'load image'),
-              const Tab(text: 'zoomable widget'),
-              const Tab(text: 'zoomable list'),
+              Tab(text: 'load image'),
+              Tab(text: 'zoomable widget'),
+              Tab(text: 'zoomable list'),
             ],
           ),
         ),
@@ -56,7 +58,7 @@ class Example extends State<MyApp> {
 }
 
 class LoadImage extends StatelessWidget {
-  const LoadImage({@required this.url, @required this.svgUrl});
+  const LoadImage({required this.url, required this.svgUrl, Key? key}) : super(key: key);
 
   final String url;
   final String svgUrl;
@@ -68,10 +70,12 @@ class LoadImage extends StatelessWidget {
         TransitionToImage(
           image: AdvancedNetworkImage(
             url,
+            // ignore: avoid_print
             loadedCallback: () => print('build@loadedCallback  It works!'),
+            // ignore: avoid_print
             loadFailedCallback: () => print('build@loadFailedCallback Oh, no!'),
             // loadingProgress: (double progress, _) => print(progress),
-            timeoutDuration: Duration(seconds: 30),
+            timeoutDuration: const Duration(seconds: 30),
             retryLimit: 1,
           ),
           // loadedCallback: () => print('It works!'),
@@ -89,9 +93,9 @@ class LoadImage extends StatelessWidget {
           height: 300.0,
           enableRefresh: true,
           loadingWidgetBuilder: (
-            BuildContext context,
-            double progress,
-            Uint8List imageData,
+            context,
+            progress,
+            imageData,
           ) {
             // print(imageData.lengthInBytes);
             return Container(
@@ -108,8 +112,14 @@ class LoadImage extends StatelessWidget {
           child: SvgPicture(
             AdvancedNetworkSvg(
               svgUrl, //svgByteDecoder
-              (Uint8List bytes, ColorFilter colorFilter, String key) {
-                return svg.svgPictureDecoder(bytes, false, colorFilter, key);
+              (theme) => (bytes, colorFilter, key) {
+                return svg.svgPictureDecoder(
+                  bytes ?? Uint8List.fromList(const []),
+                  false,
+                  colorFilter,
+                  key,
+                  theme: theme,
+                );
               },
             ),
           ),
@@ -120,7 +130,7 @@ class LoadImage extends StatelessWidget {
 }
 
 class ZoomableImage extends StatelessWidget {
-  const ZoomableImage({@required this.url});
+  const ZoomableImage({required this.url, Key? key}) : super(key: key);
 
   final String url;
 
@@ -138,7 +148,7 @@ class ZoomableImage extends StatelessWidget {
 }
 
 class ZoomableImages extends StatelessWidget {
-  const ZoomableImages({@required this.url});
+  const ZoomableImages({required this.url, Key? key}) : super(key: key);
 
   final String url;
 

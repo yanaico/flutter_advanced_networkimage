@@ -311,9 +311,6 @@ Future<Uint8List?> loadFromRemote(
   bool printError = false,
   http.Client? client,
 }) async {
-  assert(url != null);
-  assert(retryLimit != null);
-
   if (retryLimit < 0) retryLimit = 0;
   skipRetryStatusCode ??= [];
 
@@ -322,7 +319,7 @@ Future<Uint8List?> loadFromRemote(
       Duration retryDuration, double retryDurationFactor) async {
     for (int t in List.generate(retryLimit + 1, (int t) => t + 1)) {
       try {
-        http.Response? res = await (f() as FutureOr<http.Response>);
+        final http.Response? res = await (f() as FutureOr<http.Response>);
         if (res != null) {
           if ([HttpStatus.ok, HttpStatus.partialContent]
                   .contains(res.statusCode) &&
