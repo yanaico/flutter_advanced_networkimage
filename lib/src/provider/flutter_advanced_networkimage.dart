@@ -18,15 +18,15 @@ typedef Future<Uint8List?> _ImageProcessing(Uint8List data);
 class AdvancedNetworkImage extends ImageProvider<AdvancedNetworkImage> {
   AdvancedNetworkImage(
     this.url, {
-    this.scale: 1.0,
+    this.scale = 1.0,
     this.width,
     this.height,
     this.header,
-    this.useDiskCache: false,
-    this.retryLimit: 5,
-    this.retryDuration: const Duration(milliseconds: 500),
-    this.retryDurationFactor: 1.5,
-    this.timeoutDuration: const Duration(seconds: 5),
+    this.useDiskCache = false,
+    this.retryLimit = 5,
+    this.retryDuration = const Duration(milliseconds: 500),
+    this.retryDurationFactor = 1.5,
+    this.timeoutDuration = const Duration(seconds: 5),
     this.loadedCallback,
     this.loadFailedCallback,
     this.loadedFromDiskCacheCallback,
@@ -40,14 +40,7 @@ class AdvancedNetworkImage extends ImageProvider<AdvancedNetworkImage> {
     this.printError = false,
     this.skipRetryStatusCode,
     this.id,
-  })  : assert(url != null),
-        assert(scale != null),
-        assert(useDiskCache != null),
-        assert(retryLimit != null),
-        assert(retryDuration != null),
-        assert(retryDurationFactor != null),
-        assert(timeoutDuration != null),
-        assert(printError != null);
+  });
 
   /// The URL from which the image will be fetched.
   final String url;
@@ -130,9 +123,6 @@ class AdvancedNetworkImage extends ImageProvider<AdvancedNetworkImage> {
     bool memory = true,
     bool disk = false,
   }) async {
-    assert(memory != null);
-    assert(disk != null);
-
     if (memory) {
       cache ??= imageCache;
       final key = await obtainKey(configuration);

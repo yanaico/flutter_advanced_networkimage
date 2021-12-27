@@ -14,12 +14,7 @@ class ZoomableList extends StatefulWidget {
     this.enableFling: true,
     this.flingFactor: 1.0,
     this.onTap,
-  })  : assert(maxScale != null),
-        assert(enablePan != null),
-        assert(enableZoom != null),
-        assert(zoomSteps != null),
-        assert(enableFling != null),
-        assert(flingFactor != null);
+  }) : super(key: key);
 
   final Widget child;
   @deprecated
@@ -191,8 +186,6 @@ class _ZoomableListState extends State<ZoomableList>
 
   @override
   Widget build(BuildContext context) {
-    if (widget.child == null) return Container();
-
     return CustomMultiChildLayout(
       delegate: _ZoomableListLayout(),
       children: <Widget>[

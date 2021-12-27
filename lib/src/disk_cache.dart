@@ -31,7 +31,6 @@ class DiskCache {
   int _maxEntries = 5000; // default: 5000
   /// Changes the maximum cache size.
   set maxEntries(int value) {
-    assert(value != null);
     assert(value >= 0);
     if (value == maxEntries) return;
     _maxEntries = value;
@@ -46,7 +45,6 @@ class DiskCache {
   int _maxSizeBytes = 1000 << 20; // default: 1 GiB
   /// Changes the maximum cache bytes.
   set maxSizeBytes(int value) {
-    assert(value != null);
     assert(value >= 0);
     if (value == maxSizeBytes) return;
     _maxSizeBytes = value;
@@ -64,7 +62,6 @@ class DiskCache {
   int _maxCommitOps = 10;
   int get maxCommitOps => _maxCommitOps;
   set maxCommitOps(int value) {
-    assert(value != null);
     assert(value >= 0);
     if (value == maxCommitOps) return;
     _maxCommitOps = value;
@@ -293,9 +290,7 @@ class CacheRule {
     this.maxAge = const Duration(days: 30),
     this.storeDirectory: StoreDirectoryType.temporary,
     this.checksum: false,
-  })  : assert(maxAge != null),
-        assert(storeDirectory != null),
-        assert(checksum != null);
+  });
 
   /// Set a maximum age for the cache file.
   /// Default is 30 days.
@@ -311,8 +306,6 @@ class CacheRule {
 }
 
 Future<bool> removeFromCache(String url, {bool useCacheRule = false}) async {
-  if (url == null) return false;
-
   String uId = uid(url);
 
   try {
